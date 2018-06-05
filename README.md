@@ -11,14 +11,14 @@ The app can be started only if your machine have installed and configured proper
 
 ### Database
 
-Besides the starting application, in order to run the project you will need also and running MySQL DB.
+In order to run the project you will need running MySQL DB.
 Before starting you have to create additional database in your SQL server.
 The database name have to be called 'library'.
-The user that will be given to the application have to have all permissions to the created database.
+The db user that will be given to the application should have all permissions for the created database.
 
 ### MAVEN
 
-This project is build with maven build tool. 
+This project is built with MAVEN build tool. 
 To get the app up and running you have to have installed and configured Apache Maven project management and comprehension tool.
 
 ### Download the source files
@@ -64,8 +64,8 @@ mvn package
 
 ### Run the application
 
-After you successfully built the jar, now you have to execute it:
-Go into the folder where the jar is build(by default the folder is named 'target'):
+After you have successfully built the jar, now you have to execute it:
+Go into the folder where the jar is built(by default the folder is named 'target'):
 ```
 cd target
 ```
@@ -77,8 +77,8 @@ java -jar library-0.0.1-SNAPSHOT.jar
 
 ### API Documentation
 
-All the APIs that the application exposes can be found in the Swagger user interface: http://localhost:8080/swagger-ui.html
+All the API endpoints that the application exposes can be found in the Swagger user interface: http://localhost:8080/swagger-ui.html
 
 ### Library application in the browser
 
-The application has very lame frontend only for development purposes. The frontend can be found here: http://localhost:8080
+The application has very basic frontend only for development purposes. The frontend can be found here: http://localhost:8080
