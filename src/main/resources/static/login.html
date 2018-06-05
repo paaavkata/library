@@ -1,0 +1,82 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Sign In Library</title>
+        <link href="bootstrap.min.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="container">
+                <form class="signin">
+                    <label for="usernameInput" class="grey-text">Username</label>
+                    <input type="text" id="usernameInput" class="form-control" placeholder="Username">
+                    
+                    <br>
+
+                    <label for="passwordInput" class="grey-text">Password</label>
+                    <input type="password" id="passwordInput" class="form-control" placeholder="Password">
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-lg btn-primary btn-block" type="button" id="login-button">Sign in</button>
+                    </div>
+
+                    <br>
+					<div class="text-center">
+	                    <p>Don't have account? -> <a href="register.html" class="text-center">Register</a></p> 
+					</div>
+                </form>
+        </div>
+        
+        <script>
+            var loginButton = document.getElementById('login-button');            
+
+            loginButton.addEventListener("click", login);
+
+            function login() {
+                var obj ={},
+                    usernameValue = document.getElementById('usernameInput').value,
+                    passwordValue = document.getElementById('passwordInput').value;
+
+                if (!usernameValue.length || !passwordValue) {
+                    alert('Please enter username and password.');
+                    return;
+                }
+
+                obj['username'] = usernameValue;
+                obj['password'] = passwordValue;
+
+                getData('POST', 'user/login', obj, null);
+            }
+            
+            function getData(method, url, data, headers) {
+                if (headers) {
+                    headers.set('Content-Type','application/json');
+                } else {
+                    headers = new Map();
+                    headers.set('Content-Type', 'application/json');
+                }
+
+                (async () => {
+                    const rawResponse = await fetch(url, {method: method, headers, body: JSON.stringify(data)});
+                    
+                    if(rawResponse.status === 200){
+                        addCookie(await rawResponse.json());    
+                        window.location = '/';
+                    } else{
+                        alert("Wrong username or password.");
+                        return;
+                    }
+                    
+                })();
+            }
+            
+            function addCookie(object) {
+                for (var key in object) {
+                    if (object.hasOwnProperty(key)) {
+                        document.cookie = key + '=' + object[key] + '; path=/';
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

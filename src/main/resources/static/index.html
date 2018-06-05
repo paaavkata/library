@@ -1,0 +1,202 @@
+<html lang="en">
+    <head>
+        <title>Library</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="jumbotron">
+          <div class="container text-center">
+            <h1>Library Catalog</h1>
+            <br>
+            <div class="row">
+                <div class="col-md-4"> 
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Genre</button>
+                        <ul class="dropdown-menu">
+                          
+                        </ul>
+                    </div>
+                </div>     
+                <div class="col-md-4"> 
+                    <input type="text" placeholder="Search" class="form-control input-lg" id="search-field">
+                </div>
+                <div class="col-md-2" id="addBookDiv"> 
+                    <button class="btn btn-default" type="button" id="addBook">Add Book</button>
+                </div>
+                <div class="col-md-2"> 
+                    <button class="btn btn-default" type="button" id="logout">Logout</button>
+                </div>
+            </div>
+            
+          </div>
+        </div>
+
+        <script>
+            var searchField = document.getElementById('search-field'),
+                genresDropdown = document.getElementsByClassName('dropdown-menu')[0],
+                logoutButton = document.getElementById('logout'),
+                addBook = document.getElementById('addBook')
+                addBookDiv = document.getElementById('addBookDiv');
+            
+            addBook.addEventListener('click', function(){
+	           	window.location = '/addBook.html';
+            }); 
+            
+            logoutButton.addEventListener('click', function(){
+                (async () => {
+                    const rawResponse = await fetch('user/logout', {method: 'GET', headers});
+                    if(rawResponse.status === 200){
+                        window.location = '/login.html';
+                    }
+                })();
+            });   
+            
+            searchField.addEventListener('keyup', function () {
+                if (this.value) {
+                    var url = 'books/name/' + this.value + '?page=0&size=10';
+                } else {
+                    var url = 'books/all?page=0&size=10';
+                }
+                
+                getData('GET', url, null, headers); 
+
+            });
+
+            var cookies = document.cookie,
+                cookiesList = cookies.split('; '),
+                headers = new Map();
+
+            for(var i = 0; i < cookiesList.length; i++) {
+                var current = cookiesList[i],
+                    headerData = current.split('=');    
+
+                if(headerData){
+                    if(headerData[0] === 'username'){
+                        continue;
+                    }
+                    headers.set(headerData[0], headerData[1]);
+                    headers.set('Content-Type','application/json');
+                }
+            }
+            getData('GET', 'books/all?page=0&size=10', null, headers);
+            showBooksByGenre();
+
+            function getData(method, url, data, headers) {
+                (async () => {
+                    const rawResponse = await fetch(url, {method: method, headers});
+                    if(rawResponse.status === 200){
+                        var results = await rawResponse.json();
+                        catalogData(results);    
+                    } else if(rawResponse.status === 401){
+                        window.location = '/login.html';
+                    } else{
+                        throw new Error(response.status);
+                    }
+
+                })();
+            }
+
+            function catalogData(results) {
+                var data = [];
+                var content = results.content;
+                for(var i = 0; i < content.length; i++){
+                    var book = {};
+
+                    book['name'] = content[i].name;
+                    book['image'] = content[i].image;
+                    book['author'] = content[i].author;
+
+                    data.push(book);
+                }
+
+                catalogStruct(data);
+            }
+
+            function catalogStruct(data) {
+                var html = '',
+                    closeRow = false,
+                    countElements = 0,
+                    currentContainer = document.getElementsByClassName('library')[0];
+
+                if (currentContainer) {
+                    document.body.removeChild(currentContainer);
+                }
+
+                for (var i = 0; i < data.length; i++) {
+                    if (countElements === 4) {
+                        closeRow = true;
+                    }
+
+                    if(closeRow){
+                        html += '</div>';
+                        closeRow = false;
+                    }
+
+                    if(i % 4 == 0){
+                        html += '<div class="row">';
+                    }
+
+                    html += '<div class="col-sm-3">' +
+                                '<div class="panel panel-primary">' +
+                                    '<div class="panel-heading">' + data[i].name + '</div>' +
+                                    '<div class="panel-body" style="height: 300px"><img src="' + data[i].image + '" class="img-responsive" style="width:100%" alt="Image"></div>' +
+                                    '<div class="panel-footer">' + data[i].author + '</div>'+
+                                '</div>' +
+                            '</div>';
+
+                    countElements++;
+                }
+
+                var container = document.createElement('div');
+
+                container.classList.add("container");
+                container.classList.add("library");
+                container.innerHTML = html;
+
+                document.body.appendChild(container);
+            }
+
+            function showBooksByGenre() {
+                var html = '<li class="genre" value="0">All</li>';
+
+                (async () => {
+                    const rawResponse = await fetch('books/genre/all', {method: 'GET', headers});
+                    var results;
+                    if(rawResponse.status === 200){
+                        results = await rawResponse.json();
+                    } else if(rawResponse.status === 401){
+                        window.location = '/login.html';
+                    } else{
+                        throw new Error(response.status);
+                    }
+                    
+                    if(results){
+                        for (var i = 0; i < results.length; i++) {
+                            var genre = results[i];
+                            html += '<li class="genre" value="' + genre.id + '">' + genre.name + '</li>';
+                        }
+
+                        genresDropdown.innerHTML = html;
+
+                        var genresFields = document.getElementsByClassName('genre');
+
+                        for(var i = 0; i < genresFields.length; i++){
+                            genresFields[i].addEventListener('click', function(){
+                                if (this.value !== 0) {
+                                    var url = 'books/genre/' + this.innerHTML + '?page=0&size=10';
+                                } else {
+                                    var url = 'books/all?page=0&size=10';
+                                }
+                            
+                                getData('GET', url, null, headers); 
+                            });
+                        }
+                    }
+                })();
+            }
+        </script>
+    </body>
+</html>
