@@ -4,12 +4,22 @@ This project is simple library with simple functionalities.
 
 ## How to setup the project on your local machine 	
 
+### JAVA
+
+This project is written in JAVA. 
+The app can be started only if your machine have installed and configured properly jdk or jre.
+
 ### Database
 
 Besides the starting application, in order to run the project you will need also and running MySQL DB.
 Before starting you have to create additional database in your SQL server.
 The database name have to be called 'library'.
 The user that will be given to the application have to have all permissions to the created database.
+
+### MAVEN
+
+This project is build with maven build tool. 
+To get the app up and running you have to have installed and configured Apache Maven project management and comprehension tool.
 
 ### Download the source files
 Using GIT
@@ -42,62 +52,33 @@ bookImages.maxSize=5 //max size of the uploaded images(If not provided default s
 bookImages.path=images //images path in static folder(If not provided default set to 'images')
 ```
 
-3. Build the jar file
+### Build the jar file
 
 The application is setup with Spring Boot, so you have to build the jar file that is going to be run:
+1. Go into the folder of the project and run in the same folder your favourite cli(bash, power shell, cmd)
 
+2. After you make sure you have installed Apache Maven, execute the following command in the cli:
+```
+mvn package
 ```
 
-## Running the tests
+### Run the application
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
+After you successfully built the jar, now you have to execute it:
+Go into the folder where the jar is build(by default the folder is named 'target'):
 ```
-Give an example
+cd target
 ```
 
-### And coding style tests
-
-Explain what these tests test and why
-
+Execute the jar file:
 ```
-Give an example
+java -jar library-0.0.1-SNAPSHOT.jar
 ```
 
-## Deployment
+### API Documentation
 
-Add additional notes about how to deploy this on a live system
+All the APIs that the application exposes can be found in the Swagger user interface: http://localhost:8080/swagger-ui.html
 
-## Built With
+### Library application in the browser
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+The application has very lame frontend only for development purposes. The frontend can be found here: http://localhost:8080
